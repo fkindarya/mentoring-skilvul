@@ -1,4 +1,7 @@
 const User = require('../models/user')
+
+const bcrypt = require('bcrypt')
+
 module.exports = {
   getAllUser: async(req, res) => {
     const users = await User.find({}, '-__v -password')
@@ -15,6 +18,11 @@ module.exports = {
 
   addUser: (req, res) => {
     const data = req.body
+
+    const saltRounds = 10
+    const hash = bcrypt.hashSync(data.password, saltRounds)
+    data.password = hash
+
     const user = new User(data)
     user.save()
 
